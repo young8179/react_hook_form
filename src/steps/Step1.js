@@ -12,12 +12,16 @@ import { useData } from '../DataContext'
 export default function Step1() {
     const {setValues, data } = useData()
     const history = useHistory()
-    const {register, handleSubmit, errors } = useForm()
+    const { register, handleSubmit, errors } = useForm({
+        defaultValues: { firstName: data.firstName, lastName: data.lastName },
+        mode: "onBlur",
+        
+      });
     console.log(data)
     const onSubmit = (data) => {
         history.push("/step2")
         setValues(data)
-        // console.log(data)
+        console.log(data)
     }
 
     return (
