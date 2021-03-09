@@ -7,13 +7,17 @@ import MainContainer from '../components/MainContainer'
 import PrimaryButton from '../components/PrimaryButton'
 import { ErrorMessage } from '@hookform/error-message'
 import { Typography } from '@material-ui/core'
+import { useData } from '../DataContext'
 
 export default function Step1() {
+    const {setValues, data } = useData()
     const history = useHistory()
     const {register, handleSubmit, errors } = useForm()
-
+    console.log(data)
     const onSubmit = (data) => {
         history.push("/step2")
+        setValues(data)
+        // console.log(data)
     }
 
     return (
@@ -23,13 +27,13 @@ export default function Step1() {
       </Typography>
 
             <Form onSubmit={handleSubmit(onSubmit)}>
-                <Input ref={register({required: "this is required", minLength: {value:5, message:"min length is 5"}})} 
+                <Input ref={register({required: "this is required", minLength: {value:3, message:"min length is 5"}})} 
                 name="firstName" 
                 type="text" 
                 label="First Name" />
                 <ErrorMessage errors={errors} name="firstName" as="p"/>
 
-                <Input ref={register({required: "this is required", minLength: {value:5, message:"min length is 5"}})} 
+                <Input ref={register({required: "this is required", minLength: {value:3, message:"min length is 5"}})} 
                 name="lastName" 
                 type="text" 
                 label="Last Name" />
