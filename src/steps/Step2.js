@@ -8,7 +8,20 @@ import MainContainer from '../components/MainContainer';
 import { useData } from '../DataContext';
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import PrimaryButton from '../components/PrimaryButton';
+import { parsePhoneNumberFromString } from 'libphonenumber-js'
 // import { yupResolver } from 'react-hook-form-resolvers';
+
+
+const normalizePhoneNumber = (value) =>{
+    const phoneNumber = parsePhoneNumberFromString(value)
+    if(!phoneNumber){
+        return value
+    }
+    return (
+        phoneNumber.formatInternational()
+    )
+}
 
 const schema = yup.object().shape({
     email: yup
@@ -19,7 +32,7 @@ const schema = yup.object().shape({
 export default function Step2() {
     const {data, setValues} = useData()
     const history = useHistory()
-    const { register, handleSubmit, error, watch } = useForm({
+    const { register, handleSubmit, errors, watch } = useForm({
         defaultValues:{
             email: data.email,
             hasPhone: data.phoneNumber
@@ -29,13 +42,22 @@ export default function Step2() {
     })
 
     const hasPhone = watch("hasPhone");
-
-    //!const onSubmit----
+    console.log(data)
+    const onSubmit = (data) =>{
+        history.push("/step3")
+        setValues(data)
+    }
     return (
         <MainContainer>
             <Typography>Step 2</Typography>
-            <Form>
-                <Input ref={register} type="email" label="Email" name="email" required/>
+            <Form onSubmit={handleSubmit(onSubmit)}>
+                <Input ref={register} 
+                    type="email" 
+                    label="Email" 
+                    name="email" 
+                    required 
+                    error={!! errors.email} 
+                    helperText={errors?.email?.message}/>
 
                 <FormControlLabel control={<Checkbox
                    defaultValue={data.hasPhone}
@@ -50,7 +72,15 @@ export default function Step2() {
                     id="phoneNumber"
                     type="tel"
                     label="Phone Number"
-                    name="phoneNumber" />}
+                    name="phoneNumber"
+                    onChange={
+                        (event) =>{
+                            event.target.value = normalizePhoneNumber(event.target.value)
+                        }
+                    }
+                    />}
+
+                <PrimaryButton>Next</PrimaryButton>
             </Form>
         </MainContainer>
     )
